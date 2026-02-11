@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ conference.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>{{ conference.name }}</h1>
+                <p class="date-location">
+                    <span class="icon">📅</span> {{ conference.date }}<br>
+                    <span class="icon">📍</span> {{ conference.location }}
+                </p>
+                <p class="description">{{ conference.description }}</p>
+                
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search talks, speakers, or topics...">
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <section class="schedule-section">
+            <h2>Schedule</h2>
+            <div class="timetable" id="timetable">
+                {% for item in schedule %}
+                <div class="schedule-item {% if item.is_break %}lunch-break{% endif %}" 
+                     data-title="{{ item.title }}" 
+                     data-category="{{ ' '.join(item.category) }}"
+                     data-speakers="{{ ' '.join([s.first_name + ' ' + s.last_name for s in item.speakers]) }}">
+                    
+                    <div class="time-slot">{{ item.time }}</div>
+                    
+                    <div class="item-content">
+                        <div class="item-header">
+                            <h3 class="item-title">{{ item.title }}</h3>
+                            {% if not item.is_break %}
+                            <div class="categories">
+                                {% for cat in item.category %}
+                                <span class="badge">{{ cat }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="item-description">{{ item.description }}</p>
+                        
+                        {% if item.speakers %}
+                        <div class="speakers-list">
+                            {% for speaker in item.speakers %}
+                            <a href="{{ speaker.linkedin }}" target="_blank" class="speaker-card">
+                                <div class="speaker-avatar">
+                                    {{ speaker.first_name[0] }}{{ speaker.last_name[0] }}
+                                </div>
+                                <div class="speaker-info">
+                                    <span class="speaker-name">{{ speaker.first_name }} {{ speaker.last_name }}</span>
+                                    <span class="linkedin-icon">in</span>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div id="noResults" class="hidden">
+                 <p>No talks found matching your search.</p>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Google Cloud Tech Day. Created for demo purposes.</p>
+        </div>
+    </footer>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
